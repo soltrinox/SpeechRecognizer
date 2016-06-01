@@ -1,0 +1,61 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.protobuf'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "de.ponsen.speechrecognizer"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:design:23.2.1'
+    compile 'com.android.support:support-v4:23.2.1'
+
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+
+
+    // logging
+    compile 'org.slf4j:slf4j-api:1.7.12'
+    compile 'com.github.tony19:logback-android-core:1.1.1-4'
+    compile 'com.github.tony19:logback-android-classic:1.1.1-4'
+
+    // required for Google Cloud Speech API
+    compile 'com.google.guava:guava:19.0'
+    compile 'com.google.appengine:appengine-api-1.0-sdk:1.9.38'
+
+    compile 'com.google.protobuf:protobuf-java:3.0.0-beta-2'
+    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
+    compile 'io.grpc:grpc-core:0.13.2'
+    compile 'io.grpc:grpc-okhttp:0.13.2'
+    compile 'io.grpc:grpc-stub:0.13.2'
+    compile 'io.grpc:grpc-protobuf:0.13.2'
+    compile 'io.grpc:grpc-protobuf-nano:0.13.2'
+    compile 'io.grpc:grpc-all:0.13.2'
+    compile 'javax.annotation:javax.annotation-api:1.2'
+
+    compile 'com.google.oauth-client:google-oauth-client:1.22.0' exclude module: 'httpclient'
+    compile 'com.google.http-client:google-http-client:1.22.0' exclude module: 'httpclient'
+    compile 'com.google.http-client:google-http-client-android:1.22.0' exclude module: 'httpclient'
+    compile 'com.google.http-client:google-http-client-jackson2:1.22.0' exclude module: 'httpclient'
+    compile group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: '1.1.33.Fork17'
+
+    protobuf files('src/main/libs/protos.jar')
+}
