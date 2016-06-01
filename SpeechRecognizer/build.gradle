@@ -23,7 +23,7 @@ android {
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.0.0-beta-2'
+        artifact = 'com.google.protobuf:protoc:3.0.0-beta-3'
     }
     plugins {
         grpc {
@@ -51,13 +51,9 @@ protobuf {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:design:23.2.1'
-    compile 'com.android.support:support-v4:23.2.1'
-
-    compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.squareup.retrofit2:retrofit:2.0.2'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:support-v4:23.4.0'
 
     compile 'com.google.code.findbugs:jsr305:3.0.0'
 
@@ -67,11 +63,12 @@ dependencies {
     compile 'com.github.tony19:logback-android-classic:1.1.1-4'
 
     // required for Google Cloud Speech API
-//    compile 'com.google.appengine:appengine-api-1.0-sdk:1.9.38'
 
     compile 'com.google.guava:guava:19.0'
     compile 'javax.annotation:javax.annotation-api:1.2'
     compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
+    compile 'com.google.protobuf:protobuf-java:3.0.0-beta-3'
+
     compile 'io.grpc:grpc-core:0.13.2'
     compile 'io.grpc:grpc-okhttp:0.13.2'
     compile 'io.grpc:grpc-stub:0.13.2'
