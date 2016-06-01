@@ -1,4 +1,4 @@
 # SpeechRecognizer
-Simple Android Speech Recognizer. Send result via POST to target Server.
+Simple Android Speech Recognizer.
 
-Uses Google Speech for recognition. Pretty unreliable...
+Using this framework to test out Google Cloud Speech API.
