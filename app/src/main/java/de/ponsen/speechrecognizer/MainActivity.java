@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
                     if(!v.isPressed()){
                         v.startAnimation(breath);
                         Log.d(TAG, "startListening");
-
+                        //TODO: submit to Google Speech API
+                        recognize();
                     }else{
                         v.clearAnimation();
                         Log.d(TAG, "stopListening");
@@ -69,6 +70,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void recognize() {
+        AudioRequest audio;
+
+//                try {
+//            audio = createAudioRequest();
+//        } catch (IOException e) {
+//            logger.log(Level.WARNING, "Failed to read audio file: " + file);
+//            return;
+//        }
+//        logger.info("Sending " + audio.getContent().size() + " bytes from audio file: " + file);
+//        InitialRecognizeRequest initial = InitialRecognizeRequest.newBuilder()
+//                .setEncoding(AudioEncoding.LINEAR16)
+//                .setSampleRate(samplingRate)
+//                .build();
+//        RecognizeRequest request = RecognizeRequest.newBuilder()
+//                .setInitialRequest(initial)
+//                .setAudioRequest(audio)
+//                .build();
+//        NonStreamingRecognizeResponse response;
+//        try {
+//            response = blockingStub.nonStreamingRecognize(request);
+//        } catch (StatusRuntimeException e) {
+//            logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+//            return;
+//        }
+//        logger.info("Received response: " +  TextFormat.printToString(response));
+    }
+
+
 
     @Override
     protected void onResume() {
