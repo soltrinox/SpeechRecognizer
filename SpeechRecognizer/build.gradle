@@ -77,14 +77,22 @@ dependencies {
     compile 'com.github.tony19:logback-android-classic:1.1.1-4'
 
     // required for Google Cloud Speech API
-//    compile 'com.google.guava:guava:19.0'
-//    compile 'javax.annotation:javax.annotation-api:1.2'
+    //    compile 'com.google.guava:guava:19.0'
+    //    compile 'javax.annotation:javax.annotation-api:1.2'
     
     // You need to build grpc-java to obtain these libraries below.
     compile "io.grpc:grpc-okhttp:${grpcVersion}"
     compile "io.grpc:grpc-protobuf-lite:${grpcVersion}"
     compile "io.grpc:grpc-stub:${grpcVersion}"
+    compile "io.grpc:grpc-netty:${grpcVersion}"
+    compile "io.grpc:grpc-auth:${grpcVersion}"
 
+    // google-auth-library-java??
+
+    //compile 'com.google.android.gms:play-services-auth:9.2.0'
+    compile 'com.google.auth:google-auth-library-oauth2-http:0.3.0'
+
+    // Google OAUTH login
     compile 'com.google.oauth-client:google-oauth-client:1.22.0' exclude module: 'httpclient'
     compile 'com.google.http-client:google-http-client:1.22.0' exclude module: 'httpclient'
     compile 'com.google.http-client:google-http-client-android:1.22.0' exclude module: 'httpclient'
