@@ -1,59 +1,73 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
+apply plugin: 'idea'
+
+def grpcVersion = '0.15.0'
+def supportVersion = '24.0.0'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
 
     defaultConfig {
-        applicationId "de.ponsen.speechrecognizer"
-        minSdkVersion 15
-        targetSdkVersion 23
+        applicationId "com.crockettj.speechrecognizer.rpc"
+        minSdkVersion 19
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+    packagingOptions {
+        pickFirst 'plugin.xml'
+    }
+    lintOptions {
+        disable 'InvalidPackage', 'HardcodedText'
+        textReport true
+        textOutput "stdout"
     }
 }
 
-
 protobuf {
     protoc {
+        // This version must match the protobuf-java version that grpc transitively pulls in
         artifact = 'com.google.protobuf:protoc:3.0.0-beta-3'
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:0.13.2'
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
         }
     }
+    //generatedFilesBaseDir = "$projectDir/generated" å
     generateProtoTasks {
-        all().each { task ->
-            task.builtins {
-                javanano {
-                    option 'store_unknown_fields=true'
-                    option 'ignore_services=true'
-                    option 'java_multiple_files=false'
+
+        all().each {
+            task ->
+                task.builtins {
+                    // Javanano is installed by default, but needs to be removed to use protobuf lite..
+                    remove javanano
+                    java {
+                        // Options added to --java_out
+                        option 'lite'
+                    }
                 }
-            }
-            task.plugins {
-                grpc {
-                    option 'nano=true'
+
+                task.plugins {
+                    grpc {
+                        // Options added to --grpc_out
+                        option 'lite'
+                    }
                 }
-            }
         }
     }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.android.support:support-v4:23.4.0'
+
+    compile "com.android.support:appcompat-v7:${supportVersion}"
+    compile "com.android.support:design:${supportVersion}"
+    compile "com.android.support:support-v4:${supportVersion}"
 
     compile 'com.google.code.findbugs:jsr305:3.0.0'
 
@@ -63,16 +77,13 @@ dependencies {
     compile 'com.github.tony19:logback-android-classic:1.1.1-4'
 
     // required for Google Cloud Speech API
-
-    compile 'com.google.guava:guava:19.0'
-    compile 'javax.annotation:javax.annotation-api:1.2'
-    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
-    compile 'com.google.protobuf:protobuf-java:3.0.0-beta-3'
-
-    compile 'io.grpc:grpc-core:0.13.2'
-    compile 'io.grpc:grpc-okhttp:0.13.2'
-    compile 'io.grpc:grpc-stub:0.13.2'
-    compile 'io.grpc:grpc-protobuf-nano:0.13.2'
+//    compile 'com.google.guava:guava:19.0'
+//    compile 'javax.annotation:javax.annotation-api:1.2'
+    
+    // You need to build grpc-java to obtain these libraries below.
+    compile "io.grpc:grpc-okhttp:${grpcVersion}"
+    compile "io.grpc:grpc-protobuf-lite:${grpcVersion}"
+    compile "io.grpc:grpc-stub:${grpcVersion}"
 
     compile 'com.google.oauth-client:google-oauth-client:1.22.0' exclude module: 'httpclient'
     compile 'com.google.http-client:google-http-client:1.22.0' exclude module: 'httpclient'
@@ -81,4 +92,12 @@ dependencies {
     compile group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: '1.1.33.Fork17'
 
     protobuf files('src/main/libs/protos.jar')
+}
+
+idea {
+    module {
+        sourceDirs += file("${projectDir}/build/generated/source/proto/debug/grpc");
+        sourceDirs += file("${projectDir}/build/generated/source/proto/debug/java");
+    }
+    // build/generated/source/proto/debug
 }

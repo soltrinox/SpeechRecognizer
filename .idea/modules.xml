@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SpeechRecognizer/app.iml" filepath="$PROJECT_DIR$/SpeechRecognizer/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpeechRecognizer/SpeechRecognizer.iml" filepath="$PROJECT_DIR$/SpeechRecognizer/SpeechRecognizer.iml" />
       <module fileurl="file://$PROJECT_DIR$/SpeechRecognizerGoogleCloud.iml" filepath="$PROJECT_DIR$/SpeechRecognizerGoogleCloud.iml" />
     </modules>
   </component>

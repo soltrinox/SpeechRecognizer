@@ -15,9 +15,23 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.cloud.speech.v1.AudioRequest;
+import com.google.cloud.speech.v1.InitialRecognizeRequest;
+import com.google.cloud.speech.v1.NonStreamingRecognizeResponse;
+import com.google.cloud.speech.v1.RecognizeRequest;
+import com.google.protobuf.TextFormat;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.logging.Level;
+
+import io.grpc.StatusRuntimeException;
+
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = this.getClass().getSimpleName();
+
+    private final URI input;
 
     ImageButton startListeningButton;
     Animation breath;
@@ -30,6 +44,19 @@ public class MainActivity extends AppCompatActivity {
     int settingServerPort;
     String settingServerEndpoint;
     int settingWaitInMilis;
+
+
+    public MainActivity() {
+        try {
+            input = new URI("file://assets/audio.raw");
+        } catch (Exception e) {
+
+        }
+    }
+
+    private AudioRequest createAudioRequest() throws IOException {
+        return AudioRequestFactory.createRequest(this.input);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,29 +101,29 @@ public class MainActivity extends AppCompatActivity {
     public void recognize() {
         AudioRequest audio;
 
-//                try {
-//            audio = createAudioRequest();
-//        } catch (IOException e) {
-//            logger.log(Level.WARNING, "Failed to read audio file: " + file);
-//            return;
-//        }
-//        logger.info("Sending " + audio.getContent().size() + " bytes from audio file: " + file);
-//        InitialRecognizeRequest initial = InitialRecognizeRequest.newBuilder()
-//                .setEncoding(AudioEncoding.LINEAR16)
-//                .setSampleRate(samplingRate)
-//                .build();
-//        RecognizeRequest request = RecognizeRequest.newBuilder()
-//                .setInitialRequest(initial)
-//                .setAudioRequest(audio)
-//                .build();
-//        NonStreamingRecognizeResponse response;
-//        try {
-//            response = blockingStub.nonStreamingRecognize(request);
-//        } catch (StatusRuntimeException e) {
-//            logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-//            return;
-//        }
-//        logger.info("Received response: " +  TextFormat.printToString(response));
+        try {
+            audio = createAudioRequest();
+        } catch (IOException e) {
+            Log.w(TAG, "Failed to read audio file: " + file);
+            return;
+        }
+        logger.info("Sending " + audio.getContent().size() + " bytes from audio file: " + file);
+        InitialRecognizeRequest initial = InitialRecognizeRequest.newBuilder()
+                .setEncoding(InitialRecognizeRequest.AudioEncoding.LINEAR16)
+                .setSampleRate(samplingRate)
+                .build();
+        RecognizeRequest request = RecognizeRequest.newBuilder()
+                .setInitialRequest(initial)
+                .setAudioRequest(audio)
+                .build();
+        NonStreamingRecognizeResponse response;
+        try {
+            response = blockingStub.nonStreamingRecognize(request);
+        } catch (StatusRuntimeException e) {
+            logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+            return;
+        }
+        logger.info("Received response: " +  TextFormat.printToString(response));
     }
 
 
