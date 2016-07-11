@@ -19,19 +19,25 @@ import com.google.cloud.speech.v1.AudioRequest;
 import com.google.cloud.speech.v1.InitialRecognizeRequest;
 import com.google.cloud.speech.v1.NonStreamingRecognizeResponse;
 import com.google.cloud.speech.v1.RecognizeRequest;
+import com.google.cloud.speech.v1.SpeechGrpc;
 import com.google.protobuf.TextFormat;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
+import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = this.getClass().getSimpleName();
 
-    private final URI input;
+    private static final List<String> OAUTH2_SCOPES =
+            Arrays.asList("https://www.googleapis.com/auth/cloud-platform");
 
     ImageButton startListeningButton;
     Animation breath;
@@ -44,19 +50,6 @@ public class MainActivity extends AppCompatActivity {
     int settingServerPort;
     String settingServerEndpoint;
     int settingWaitInMilis;
-
-
-    public MainActivity() {
-        try {
-            input = new URI("file://assets/audio.raw");
-        } catch (Exception e) {
-
-        }
-    }
-
-    private AudioRequest createAudioRequest() throws IOException {
-        return AudioRequestFactory.createRequest(this.input);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +77,13 @@ public class MainActivity extends AppCompatActivity {
                     if(!v.isPressed()){
                         v.startAnimation(breath);
                         Log.d(TAG, "startListening");
-                        //TODO: submit to Google Speech API
-                        recognize();
+                        try {
+                            recognize();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else{
                         v.clearAnimation();
                         Log.d(TAG, "stopListening");
@@ -98,35 +96,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void recognize() {
-        AudioRequest audio;
+    public void recognize() throws IOException, InterruptedException {
+        String audioFile = "assets/audio.raw";
+        String host = "speech.googleapis.com";
+        Integer port = 443;
+        Integer sampling = 16000;
 
+        NonStreamingRecognizeClient client =
+                new NonStreamingRecognizeClient(host, port, URI.create(audioFile), sampling);
         try {
-            audio = createAudioRequest();
-        } catch (IOException e) {
-            Log.w(TAG, "Failed to read audio file: " + file);
-            return;
+            client.recognize();
+        } finally {
+            client.shutdown();
         }
-        logger.info("Sending " + audio.getContent().size() + " bytes from audio file: " + file);
-        InitialRecognizeRequest initial = InitialRecognizeRequest.newBuilder()
-                .setEncoding(InitialRecognizeRequest.AudioEncoding.LINEAR16)
-                .setSampleRate(samplingRate)
-                .build();
-        RecognizeRequest request = RecognizeRequest.newBuilder()
-                .setInitialRequest(initial)
-                .setAudioRequest(audio)
-                .build();
-        NonStreamingRecognizeResponse response;
-        try {
-            response = blockingStub.nonStreamingRecognize(request);
-        } catch (StatusRuntimeException e) {
-            logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-            return;
-        }
-        logger.info("Received response: " +  TextFormat.printToString(response));
     }
-
-
 
     @Override
     protected void onResume() {
