@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "api-project-896945449984",
+  "private_key_id": "4704db769fb738709eaf5fb6f28976e5706420fd",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCSCWFwJE/RjHUC\n+tuM80UfmDLbRmbf9TIE+WH99WfJs5bQLOS93LrlXuBPFDYCoA7TAZh+M2nis+Fo\nmEk+9qHVq+sZOINPzhUeNrd5+MmeaS/okraIZvmpymILxii0uE6cukZIxeTeEOcb\nKv0FtRjE2TXsJvoiKMAO6UZs7mkHhTyRUL+Hyz9VPjvqA1x8/fP8M/rFbPfxXiFy\nFN+B5nR49wrDwCNhAyim/EcNzY1XY6XDLmVZwOzuu7Wa0kjUStoTkIjGyq5uuEE5\n7z7hmp4BjHrmcBGxaGsZfjwmnCIc9aQrSWP9s/6PVJxk/y+9vdlfwlMaglGrRtqf\nzfRFPa0bAgMBAAECggEAePRuENzyg2QrcmlmOQswwGdmD/nysSI76KTJRffhm800\nZ34Xgy30WpBHhxf9WBVL0fbrX/OjitJkKyae3BiYmApJsdz93baaBSlatBqcm6kR\ntjb2Gmn39Wqb5JafFnflHKioGBRYaJllYTos0XJabohdwhfSa0KHOJJ78zNQKJow\n2DcpO+qb6WCv+6uYpVcMsT60QqqbgGLxfF9UZuXb6BKydEox7szIwwmMPeqeTmwn\nobQI0dDYO1BDSstYJCK4zXSCwea/B1hSot9EgKO/v6/TlCRBD7tWLjkx6FBdM6cI\na/JxkMd71vKDETn42col5fgG40dkWDmW4f47QQ3NSQKBgQDGQ7B6vGjAmAKL6KqM\n1TqwMkgLYnPkvLCY5TclFcFW7HnDvbPnNO7fNGonp6nZJGr9fEGKRN+Kact/DqLU\neYyhAcQjW4cjI+Z8Kixtae8H26ub/MbWnTRZNk5iTfcaq2yr+KNi7Mgd0Jizu/8T\njYUN+7NwcvUx5SSVTtJGNUUEJwKBgQC8kDDBvYi03y1yltfNgUoYl3msYb9TCiBP\n6D+BaXXR5+8BjwzhT1bBHgIEk2WS8esp/feZ/ndFJ84ivA1B9alSLrUOAJcpo2Id\nJSULozMYYQft1vPjItJdYu2Y4NNyvKiEDVbYVgEJXRfHwt0nPVLOSTpg+y12ZyUs\n6Xd71Cyj7QKBgE2dgiEKURfUamrLErk/YFJJ3NpYGHabR6cTVJs4ARA+UwzF3v/M\nQRcwNb6AbIWNNDU3x5CRldFhyUBcQnJbgyokvtv4oNao3zoMaIgMyH6TCINwWYb6\n09t43was7ueJ5GkOVSgM+epyFtWF6z2EUWo/9uc2mbaGteOdj8PcZsBRAoGASeja\ns5Xu97Ziwf+OJub+fBUjhAXsUEgv0iJeggMsQ1J9xEal7cqDXr68W77KmYZpftQl\nMR8k8N5hVgwPxkLcU3IrVYm1toRr+LCOjLkzVeLykK8oeWc0vZYBO2MkflykUN5J\npBJR5bGvmIUw2iiXRHQ/hbPuZfKYB7qbMtY/iSECgYAeOgTTBmqPHY85f7pi1fPX\nKwAVWxFrq8bPV6jrsu3zz9g8yE2jUsp4Xdm0HWHsXLTsZ6HP4JNdJXXUAeawTpoB\nEGPQm/mECXprkkVlisjDcDzuJ5tEuuyA9jAyIPCqVOj3YdXctYUJiF+eLR4d1AgD\nQxBoed1VxIEoImeym5X9qQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "mediatuners@api-project-896945449984.iam.gserviceaccount.com",
+  "client_id": "118221620193041329596",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mediatuners%40api-project-896945449984.iam.gserviceaccount.com"
+}
