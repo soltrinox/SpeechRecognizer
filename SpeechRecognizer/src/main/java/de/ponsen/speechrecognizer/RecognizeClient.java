@@ -42,13 +42,6 @@ import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyChannelBuilder;
 import io.grpc.stub.StreamObserver;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -109,7 +102,8 @@ public class RecognizeClient {
     StreamObserver<RecognizeResponse> responseObserver = new StreamObserver<RecognizeResponse>() {
       @Override
       public void onNext(RecognizeResponse response) {
-        logger.info("Received response: " +  TextFormat.printToString(response));
+//        logger.info("Received response: " +  TextFormat.printToString(response));
+        logger.info("Received response: " +  response.toString());
       }
 
       @Override
@@ -171,70 +165,11 @@ public class RecognizeClient {
     finishLatch.await(1, TimeUnit.MINUTES);
   }
 
-  public static void main(String[] args) throws Exception {
-
+  public static void startRecognizer() throws Exception {
     String audioFile = "";
     String host = "speech.googleapis.com";
     Integer port = 443;
     Integer sampling = 16000;
-
-    CommandLineParser parser = new DefaultParser();
-
-    Options options = new Options();
-    options.addOption(OptionBuilder.withLongOpt("file")
-        .withDescription("path to audio file")
-        .hasArg()
-        .withArgName("FILE_PATH")
-        .create());
-    options.addOption(OptionBuilder.withLongOpt("host")
-        .withDescription("endpoint for api, e.g. speech.googleapis.com")
-        .hasArg()
-        .withArgName("ENDPOINT")
-        .create());
-    options.addOption(OptionBuilder.withLongOpt("port")
-        .withDescription("SSL port, usually 443")
-        .hasArg()
-        .withArgName("PORT")
-        .create());
-    options.addOption(OptionBuilder.withLongOpt("sampling")
-        .withDescription("Sampling Rate, i.e. 16000")
-        .hasArg()
-        .withArgName("RATE")
-        .create());
-
-    try {
-      CommandLine line = parser.parse(options, args);
-      if (line.hasOption("file")) {
-        audioFile = line.getOptionValue("file");
-      } else {
-        System.err.println("An Audio file must be specified (e.g. /foo/baz.raw).");
-        System.exit(1);
-      }
-
-      if (line.hasOption("host")) {
-        host = line.getOptionValue("host");
-      } else {
-        System.err.println("An API enpoint must be specified (typically speech.googleapis.com).");
-        System.exit(1);
-      }
-
-      if (line.hasOption("port")) {
-        port = Integer.parseInt(line.getOptionValue("port"));
-      } else {
-        System.err.println("An SSL port must be specified (typically 443).");
-        System.exit(1);
-      }
-
-      if (line.hasOption("sampling")) {
-        sampling = Integer.parseInt(line.getOptionValue("sampling"));
-      } else {
-        System.err.println("An Audio sampling rate must be specified.");
-        System.exit(1);
-      }
-    } catch (ParseException exp) {
-      System.err.println("Unexpected exception:" + exp.getMessage());
-      System.exit(1);
-    }
 
     RecognizeClient client =
         new RecognizeClient(host, port, audioFile, sampling);

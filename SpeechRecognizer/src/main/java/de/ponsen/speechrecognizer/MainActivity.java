@@ -1,6 +1,7 @@
 package de.ponsen.speechrecognizer;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,29 +16,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.cloud.speech.v1.AudioRequest;
-import com.google.cloud.speech.v1.InitialRecognizeRequest;
-import com.google.cloud.speech.v1.NonStreamingRecognizeResponse;
-import com.google.cloud.speech.v1.RecognizeRequest;
-import com.google.cloud.speech.v1.SpeechGrpc;
-import com.google.protobuf.TextFormat;
-
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-
-import io.grpc.ManagedChannel;
-import io.grpc.StatusRuntimeException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = this.getClass().getSimpleName();
-
-    private static final List<String> OAUTH2_SCOPES =
-            Arrays.asList("https://www.googleapis.com/auth/cloud-platform");
 
     ImageButton startListeningButton;
     Animation breath;
@@ -77,8 +64,15 @@ public class MainActivity extends AppCompatActivity {
                     if(!v.isPressed()){
                         v.startAnimation(breath);
                         Log.d(TAG, "startListening");
+                        AssetManager am = getAssets();
+                        File file = null;
                         try {
-                            recognize();
+                            file = createFileFromInputStream("temporary_audio", am.open("assets/audio.raw"));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            NonStreamingRecognizeClient.start(file);
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (InterruptedException e) {
@@ -96,19 +90,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void recognize() throws IOException, InterruptedException {
-        String audioFile = "assets/audio.raw";
-        String host = "speech.googleapis.com";
-        Integer port = 443;
-        Integer sampling = 16000;
+    private File createFileFromInputStream(String my_file_name, InputStream inputStream) {
 
-        NonStreamingRecognizeClient client =
-                new NonStreamingRecognizeClient(host, port, URI.create(audioFile), sampling);
         try {
-            client.recognize();
-        } finally {
-            client.shutdown();
+            File f = new File(my_file_name);
+            OutputStream outputStream = new FileOutputStream(f);
+            byte buffer[] = new byte[1024];
+            int length = 0;
+
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            outputStream.close();
+            inputStream.close();
+
+            return f;
+        } catch (IOException e) {
+            //Logging exception
         }
+        return null;
     }
 
     @Override
@@ -160,7 +161,4 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void restartSpeech(){
-
-    }
 }

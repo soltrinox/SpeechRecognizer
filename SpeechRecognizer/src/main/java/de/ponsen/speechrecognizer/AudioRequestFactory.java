@@ -4,14 +4,22 @@ package de.ponsen.speechrecognizer;
  * Created by crockettj on 7/11/16.
  */
 
+import android.app.Application;
+import android.content.res.AssetManager;
+
 import com.google.cloud.speech.v1.AudioRequest;
 import com.google.protobuf.ByteString;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+//import java.nio.file.Files;
+//import java.nio.file.Path;
+//import java.nio.file.Paths;
 
 /*
  * AudioRequestFactory takes a URI as an input and creates an AudioRequest. The URI can point to a
@@ -25,18 +33,48 @@ public class AudioRequestFactory {
     /**
      * Takes an input URI of form $scheme:// and converts to audio request.
      *
-     * @param uri input uri
      * @return AudioRequest audio request
      */
-    public static AudioRequest createRequest(URI uri)
+    public static AudioRequest createRequest(File file)
             throws IOException {
-        if (uri.getScheme() == null || uri.getScheme().equals(FILE_SCHEME)) {
-            Path path = Paths.get(uri);
-            return audioFromBytes(Files.readAllBytes(path));
-        } else if (uri.getScheme().equals(GS_SCHEME)) {
-            return AudioRequest.newBuilder().setUri(uri.toString()).build();
+            return audioFromBytes(readFile(file));
+    }
+
+    public static byte[] convertFileToByteArray(File f) {
+        byte[] byteArray = null;
+        try {
+            InputStream inputStream = new FileInputStream(f);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] b = new byte[1024 * 8];
+            int bytesRead = 0;
+
+            while ((bytesRead = inputStream.read(b)) != -1) {
+                bos.write(b, 0, bytesRead);
+            }
+
+            byteArray = bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        throw new RuntimeException("scheme not supported " + uri.getScheme());
+        return byteArray;
+    }
+
+    public static byte[] readFile(File file) throws IOException {
+        // Open file
+        RandomAccessFile f = new RandomAccessFile(file, "r");
+        try {
+            // Get and check length
+            long longlength = f.length();
+            int length = (int) longlength;
+            if (length != longlength)
+                throw new IOException("File size >= 2 GB");
+            // Read file and return data
+            byte[] data = new byte[length];
+            f.readFully(data);
+            return data;
+        } finally {
+            f.close();
+        }
     }
 
     /**

@@ -9,16 +9,37 @@ android {
     compileSdkVersion 24
     buildToolsVersion "24.0.0"
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
     defaultConfig {
         applicationId "com.crockettj.speechrecognizer.rpc"
-        minSdkVersion 19
+        minSdkVersion 22
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
+
     packagingOptions {
         pickFirst 'plugin.xml'
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+        exclude 'META-INF/services/io.grpc.ManagedChannelProvider'
     }
+
     lintOptions {
         disable 'InvalidPackage', 'HardcodedText'
         textReport true
@@ -42,18 +63,16 @@ protobuf {
         all().each {
             task ->
                 task.builtins {
-                    // Javanano is installed by default, but needs to be removed to use protobuf lite..
+                    // Javanano is installed by default, but needs to be removed to use java
                     remove javanano
                     java {
                         // Options added to --java_out
-                        option 'lite'
                     }
                 }
 
                 task.plugins {
                     grpc {
                         // Options added to --grpc_out
-                        option 'lite'
                     }
                 }
         }
@@ -62,6 +81,8 @@ protobuf {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+
+    compile 'com.android.support:multidex:1.0.1'
 
     testCompile 'junit:junit:4.12'
 
@@ -78,13 +99,16 @@ dependencies {
 
     // required for Google Cloud Speech API
     //    compile 'com.google.guava:guava:19.0'
-    //    compile 'javax.annotation:javax.annotation-api:1.2'
+    compile 'javax.annotation:javax.annotation-api:1.2'
     
     // You need to build grpc-java to obtain these libraries below.
-    compile "io.grpc:grpc-okhttp:${grpcVersion}"
-    compile "io.grpc:grpc-protobuf-lite:${grpcVersion}"
+//    compile "io.grpc:grpc-protobuf-lite:${grpcVersion}"
     compile "io.grpc:grpc-stub:${grpcVersion}"
+
     compile "io.grpc:grpc-netty:${grpcVersion}"
+//    compile "io.grpc:grpc-okhttp:${grpcVersion}" // only enable netty OR okhttp, not both. current has some netty stuff so do NOT include grpc-okhttp
+
+    compile "io.grpc:grpc-protobuf:${grpcVersion}"
     compile "io.grpc:grpc-auth:${grpcVersion}"
 
     // google-auth-library-java??
@@ -109,3 +133,4 @@ idea {
     }
     // build/generated/source/proto/debug
 }
+

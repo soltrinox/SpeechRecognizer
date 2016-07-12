@@ -25,6 +25,8 @@ package de.ponsen.speechrecognizer;
 //
 // Then set environment variable GOOGLE_APPLICATION_CREDENTIALS to the full path of that file.
 
+import android.content.res.AssetManager;
+
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.speech.v1.AudioRequest;
 import com.google.cloud.speech.v1.InitialRecognizeRequest;
@@ -40,7 +42,9 @@ import io.grpc.auth.ClientAuthInterceptor;
 import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyChannelBuilder;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -62,7 +66,7 @@ public class NonStreamingRecognizeClient {
 
   private final String host;
   private final int port;
-  private final URI input;
+  private final File input;
   private final int samplingRate;
 
   private final ManagedChannel channel;
@@ -71,14 +75,17 @@ public class NonStreamingRecognizeClient {
   /**
    * Construct client connecting to Cloud Speech server at {@code host:port}.
    */
-  public NonStreamingRecognizeClient(String host, int port, URI input, int samplingRate)
+  public NonStreamingRecognizeClient(String host, int port, File input, int samplingRate)
       throws IOException {
     this.host = host;
     this.port = port;
     this.input = input;
     this.samplingRate = samplingRate;
+    final String API_KEY = "AIzaSyDDhyXsfjknBf1tDRT6Ofb3C6-eLIOUMvk";
+    final String client_id = "896945449984-s5g19onj14k82tmaqvpo6c2aih3tc6vp.apps.googleusercontent.com";
 
-    GoogleCredentials creds = GoogleCredentials.getApplicationDefault();
+    InputStream resourceAsStream = MainActivity.class.getClassLoader().getResourceAsStream("Google-Play-Android-Developer.json");
+    GoogleCredentials creds = GoogleCredentials.fromStream(resourceAsStream);
     creds = creds.createScoped(OAUTH2_SCOPES);
     channel = NettyChannelBuilder.forAddress(host, port)
         .negotiationType(NegotiationType.TLS)
@@ -88,8 +95,8 @@ public class NonStreamingRecognizeClient {
     logger.info("Created blockingStub for " + host + ":" + port);
   }
 
-  private AudioRequest createAudioRequest() throws IOException {
-    return AudioRequestFactory.createRequest(this.input);
+  private AudioRequest createAudioRequest(File file) throws IOException {
+    return AudioRequestFactory.createRequest(file);
   }
 
   public void shutdown() throws InterruptedException {
@@ -100,9 +107,9 @@ public class NonStreamingRecognizeClient {
   public void recognize() {
     AudioRequest audio;
     try {
-      audio = createAudioRequest();
+      audio = createAudioRequest(input);
     } catch (IOException e) {
-      logger.log(Level.WARNING, "Failed to read audio uri input: " + input);
+      logger.log(Level.WARNING, "Failed to read audio uri input: " + input + ":" + e.getMessage());
       return;
     }
     logger.info("Sending " + audio.getContent().size() + " bytes from audio uri input: " + input);
@@ -117,11 +124,41 @@ public class NonStreamingRecognizeClient {
     NonStreamingRecognizeResponse response;
     try {
       response = blockingStub.nonStreamingRecognize(request);
+      logger.info("Received response: " + TextFormat.printToString(response));
     } catch (StatusRuntimeException e) {
       logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
       return;
     }
-    logger.info("Received response: " +  TextFormat.printToString(response));
   }
 
+  public static void start(final File file) throws IOException, InterruptedException {
+    Thread background=new Thread(new Runnable() {
+      public void run() {
+        try {
+          startRecognize(file);
+        } catch (IOException e) {
+          e.printStackTrace();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+
+    });
+    background.start();
+  }
+
+  public static void startRecognize(File file) throws IOException, InterruptedException {
+    String audioFile = "file:///assets/audio.raw";
+    String host = "speech.googleapis.com";
+    Integer port = 443;
+    Integer sampling = 16000;
+
+    NonStreamingRecognizeClient client =
+            new NonStreamingRecognizeClient(host, port, file, sampling);
+    try {
+      client.recognize();
+    } finally {
+      client.shutdown();
+    }
+  }
 }
